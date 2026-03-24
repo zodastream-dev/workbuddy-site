@@ -17,7 +17,13 @@ export default function Login() {
     const { error: err } = await signIn(email, password)
     setLoading(false)
     if (err) {
-      setError('邮箱或密码错误，请重试')
+      if (err.message?.toLowerCase().includes('email not confirmed')) {
+        setError('邮箱尚未验证，请查收注册时发送的确认邮件并点击链接，再来登录')
+      } else if (err.message?.toLowerCase().includes('invalid login credentials') || err.message?.toLowerCase().includes('invalid credentials')) {
+        setError('邮箱或密码错误，请重试')
+      } else {
+        setError(err.message || '登录失败，请稍后重试')
+      }
     } else {
       navigate('/dashboard')
     }
